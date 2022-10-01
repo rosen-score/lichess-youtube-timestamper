@@ -119,7 +119,7 @@ export default {
 
 <template>
   <div class="lg:flex lg:flex-row">
-    <div class="lg:basis-5/12 flex-none bg-slate-100 p-4">
+    <div class="lg:basis-5/12 flex-none bg-slate-100 p-4" :class="{ 'mx-auto lg:basis-2/3': !hasChapters }">
       <form @submit.prevent="onSubmit">
         <div class="form-control">
           <label class="label cursor-pointer">
@@ -142,7 +142,7 @@ export default {
         <iframe class="rounded-xl w-full aspect-video" src="https://www.youtube.com/embed/Aw3zcG_efuI" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
       </div>
     </div>
-    <div class="lg:basis-7/12 flex-none">
+    <div class="lg:basis-7/12 flex-none" v-if="hasChapters">
       <div class="bg-slate-200 p-4">
         <h3 class="font-semibold">Options</h3>
         <div class="form-control">
@@ -170,7 +170,7 @@ export default {
           </label>
         </div>
       </div>
-      <div class="bg-yellow-100 p-4"  v-if="hasChapters">
+      <div class="bg-yellow-100 p-4">
         <h3 class="font-semibold">Copy &amp; paste this to the video description</h3>
         <p>YouTube will automatically add chapter markers and link the timestamps once this content is in the description</p>
         <div class="py-4 px-2 text-sm">
