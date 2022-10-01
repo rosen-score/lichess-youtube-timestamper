@@ -17,8 +17,8 @@ import TimestamperForm from './components/TimestamperForm.vue'
       <img src="/with-chapters.png" class="w-3/4 lg:w-1/2 mx-auto rounded-lg" alt="YouTube video with chapters">
     </div>
     <TimestamperForm />
+    <div class="text-center mt-12">
+      <a class="link link-primary" href="https://github.com/rosen-score/lichess-youtube-timestamper">View this project on Github</a>
+    </div>
   </div>
 </template>
-
-<style scoped>
-</style>

@@ -174,11 +174,4 @@ export default {
       </div>
     </div>
   </div>
-
-  <div class="text-center mt-12">
-    <a class="link link-primary" href="https://github.com/rosen-score/lichess-youtube-timestamper">View this project on Github</a>
-  </div>
 </template>
-
-<style scoped>
-</style>
