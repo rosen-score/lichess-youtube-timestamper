@@ -118,9 +118,9 @@ export default {
 </script>
 
 <template>
-  <div class="w-full lg:w-2/3 mx-auto">
-    <div class="bg-slate-100 p-4">
-      <form @submit.prevent="onSubmit" class="w-3/4 mx-auto">
+  <div class="lg:flex lg:flex-row">
+    <div class="lg:basis-5/12 flex-none bg-slate-100 p-4">
+      <form @submit.prevent="onSubmit">
         <div class="form-control">
           <label class="label cursor-pointer">
             <span class="label-text">Lichess username</span>
@@ -137,46 +137,48 @@ export default {
           <button type="submit" class="btn btn-wide btn-accent">Generate Chapters</button>
         </div>
       </form>
-      <div class="bg-slate-300 m-4 p-4 text-center" v-if="isUsingDefault">
+      <div class="bg-slate-300 m-4 p-4 text-center rounded-lg" v-if="isUsingDefault">
         <p class="mb-2">Use the prefilled examples above to see what the output would look like for this "Lichess Plays" video:</p>
         <iframe class="rounded-xl w-full aspect-video" src="https://www.youtube.com/embed/Aw3zcG_efuI" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
       </div>
     </div>
-    <div class="bg-slate-200 p-4 my-2" v-if="hasChapters">
-      <h3 class="font-semibold">Options</h3>
-      <div class="form-control">
-        <label class="label cursor-pointer">
-          <span class="label-text">Include the opening name</span>
-          <input type="checkbox" class="toggle toggle-accent" v-model="options.showOpeningName" />
-        </label>
+    <div class="lg:basis-7/12 flex-none">
+      <div class="bg-slate-200 p-4">
+        <h3 class="font-semibold">Options</h3>
+        <div class="form-control">
+          <label class="label cursor-pointer">
+            <span class="label-text">Include the opening name</span>
+            <input type="checkbox" class="toggle toggle-accent" v-model="options.showOpeningName" />
+          </label>
+        </div>
+        <div class="form-control">
+          <label class="label cursor-pointer">
+            <span class="label-text">Include the opponent's username</span>
+            <input type="checkbox" class="toggle toggle-accent" v-model="options.showOpponentName" />
+          </label>
+        </div>
+        <div class="form-control">
+          <label class="label cursor-pointer">
+            <span class="label-text">Include the opponent's rating</span>
+            <input type="checkbox" class="toggle toggle-accent" v-model="options.showOpponentRating" />
+          </label>
+        </div>
+        <div class="form-control">
+          <label class="label cursor-pointer">
+            <span class="label-text">First game starts at (seconds into video)</span>
+            <input type="number" class="input input-bordered input-accent w-24" v-model.number="timestampOfFirstGame" min="0" />
+          </label>
+        </div>
       </div>
-      <div class="form-control">
-        <label class="label cursor-pointer">
-          <span class="label-text">Include the opponent's username</span>
-          <input type="checkbox" class="toggle toggle-accent" v-model="options.showOpponentName" />
-        </label>
-      </div>
-      <div class="form-control">
-        <label class="label cursor-pointer">
-          <span class="label-text">Include the opponent's rating</span>
-          <input type="checkbox" class="toggle toggle-accent" v-model="options.showOpponentRating" />
-        </label>
-      </div>
-      <div class="form-control">
-        <label class="label cursor-pointer">
-          <span class="label-text">First game starts at (seconds into video)</span>
-          <input type="number" class="input input-bordered input-accent w-24" v-model.number="timestampOfFirstGame" min="0" />
-        </label>
-      </div>
-    </div>
-    <div class="bg-yellow-100 p-4" v-if="hasChapters">
-      <h3 class="font-semibold">Copy &amp; paste this to the video description</h3>
-      <p>YouTube will automatically add chapter markers and link the timestamps once this content is in the description</p>
-      <div class="p-4 whitespace-nowrap overflow-x-auto">
-        <template v-for="chapter in chapters">
-          {{ chapter.timestamp }} {{ chapter.title }}
-          <br />
-        </template>
+      <div class="bg-yellow-100 p-4"  v-if="hasChapters">
+        <h3 class="font-semibold">Copy &amp; paste this to the video description</h3>
+        <p>YouTube will automatically add chapter markers and link the timestamps once this content is in the description</p>
+        <div class="py-4 px-2 text-sm">
+          <template v-for="chapter in chapters">
+            {{ chapter.timestamp }} {{ chapter.title }}
+            <br />
+          </template>
+        </div>
       </div>
     </div>
   </div>
