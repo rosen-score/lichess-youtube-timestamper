@@ -11,10 +11,10 @@ import TimestamperForm from './components/TimestamperForm.vue'
       <p class="text-xl">Automatically add chapters of your chess games to your YouTube videos</p>
 
       <h3 class="text-2xl mt-6">Go from this:</h3>
-      <img src="/no-chapters.png" class="w-3/4 lg:w-1/2 mx-auto rounded-lg" alt="YouTube video with no chapters">
+      <img src="/no-chapters.png" class="w-3/4 lg:w-1/2 mx-auto rounded-lg" alt="YouTube video with no chapters" />
 
       <h3 class="text-2xl mt-6">To this:</h3>
-      <img src="/with-chapters.png" class="w-3/4 lg:w-1/2 mx-auto rounded-lg" alt="YouTube video with chapters">
+      <img src="/with-chapters.png" class="w-3/4 lg:w-1/2 mx-auto rounded-lg" alt="YouTube video with chapters" />
     </div>
     <TimestamperForm />
     <div class="text-center mt-12">

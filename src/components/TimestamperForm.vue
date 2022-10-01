@@ -1,7 +1,7 @@
 <script lang="ts">
 import { game, games } from 'chess-fetcher'
 
-const defaultUsername      = 'Fins'
+const defaultUsername = 'Fins'
 const defaultFirstGameLink = 'https://lichess.org/r6LZ0lc0'
 
 type Chapter = {
@@ -22,7 +22,7 @@ export default {
         showOpeningName: true,
         showOpponentName: true,
         showOpponentRating: true,
-      }
+      },
     }
   },
 
@@ -42,10 +42,12 @@ export default {
       }
 
       return [
-        this.timestampOfFirstGame >= 10 ?{
-          timestamp: '0:00',
-          title: 'Introduction',
-        } : {},
+        this.timestampOfFirstGame >= 10
+          ? {
+              timestamp: '0:00',
+              title: 'Introduction',
+            }
+          : {},
         ...this.games.map((game): Chapter => {
           let title: string[] = []
 
@@ -72,10 +74,10 @@ export default {
           }
 
           return {
-            timestamp: this.convertSecondsToHhMmSs(this.timestampOfFirstGame + ((game.timestamp - this.firstGameTimestamp) / 1000)),
+            timestamp: this.convertSecondsToHhMmSs(this.timestampOfFirstGame + (game.timestamp - this.firstGameTimestamp) / 1000),
             title: title.join(' '),
           }
-        })
+        }),
       ]
     },
   },
@@ -97,16 +99,20 @@ export default {
       this.games = []
       game(this.firstGameLink).then((game) => {
         let timestampForFirstGame = game.timestamp
-        games(`https://lichess.org/@/${this.username}`, (game) => {
-          this.games.push(game)
-        }, {
-          since: timestampForFirstGame,
-          until: timestampForFirstGame + (60 * 60 * 10 * 1000), // get 10 hours worth of games
-          sort: 'dateAsc',
-          opening: true,
-        })
+        games(
+          `https://lichess.org/@/${this.username}`,
+          (game) => {
+            this.games.push(game)
+          },
+          {
+            since: timestampForFirstGame,
+            until: timestampForFirstGame + 60 * 60 * 10 * 1000, // get 10 hours worth of games
+            sort: 'dateAsc',
+            opening: true,
+          }
+        )
       })
-    }
+    },
   },
 }
 </script>
@@ -169,7 +175,7 @@ export default {
       <div class="p-4 whitespace-nowrap overflow-x-auto">
         <template v-for="chapter in chapters">
           {{ chapter.timestamp }} {{ chapter.title }}
-          <br>
+          <br />
         </template>
       </div>
     </div>
