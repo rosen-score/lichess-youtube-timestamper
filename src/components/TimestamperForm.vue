@@ -17,7 +17,7 @@ export default {
 
       games: [],
 
-      timestampOfFirstGame: 30,
+      gamesStartAt: 30, // seconds into YouTube video when the first game starts
       options: {
         showOpeningName: true,
         showOpponentName: true,
@@ -42,7 +42,7 @@ export default {
       }
 
       return [
-        this.timestampOfFirstGame >= 10
+        this.gamesStartAt >= 10
           ? {
               timestamp: '0:00',
               title: 'Introduction',
@@ -74,7 +74,7 @@ export default {
           }
 
           return {
-            timestamp: this.convertSecondsToHhMmSs(this.timestampOfFirstGame + (game.timestamp - this.firstGameTimestamp) / 1000),
+            timestamp: this.convertSecondsToHhMmSs(this.gamesStartAt + (game.timestamp - this.firstGameTimestamp) / 1000),
             title: title.join(' '),
           }
         }),
@@ -83,7 +83,7 @@ export default {
   },
 
   methods: {
-    convertSecondsToHhMmSs(seconds) {
+    convertSecondsToHhMmSs(seconds: number): string {
       // YouTube chapters have to be at least 10 seconds long
       // so if the 1st game starts within the first 10 seconds of the video, just use "0:00"
       if (seconds < 10) {
@@ -91,9 +91,7 @@ export default {
       }
       let date = new Date('2000-01-01T00:00:00Z')
       date.setSeconds(seconds)
-      let timestamp = date.toISOString().substring(11, 19)
-
-      return timestamp.replace(/^0+:?0?/, '')
+      return date.toISOString().substring(11, 19).replace(/^0+:?0?/, '')
     },
     onSubmit() {
       this.games = []
@@ -166,7 +164,7 @@ export default {
         <div class="form-control">
           <label class="label cursor-pointer">
             <span class="label-text">First game starts at (seconds into video)</span>
-            <input type="number" class="input input-bordered input-accent w-24" v-model.number="timestampOfFirstGame" min="0" />
+            <input type="number" class="input input-bordered input-accent w-24" v-model.number="gamesStartAt" min="0" />
           </label>
         </div>
       </div>
