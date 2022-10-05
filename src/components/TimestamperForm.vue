@@ -175,10 +175,9 @@ export default defineComponent({
         <h3 class="font-semibold">Copy &amp; paste this to the video description</h3>
         <p>YouTube will automatically add chapter markers and link the timestamps once this content is in the description</p>
         <div class="py-4 px-2 text-sm">
-          <template v-for="chapter in chapters">
-            {{ chapter.timestamp }} {{ chapter.title }}
-            <br />
-          </template>
+          <div v-for="chapter in chapters">
+            {{ (chapter as Chapter).timestamp }} {{ (chapter as Chapter).title }}
+          </div>
         </div>
       </div>
     </div>
