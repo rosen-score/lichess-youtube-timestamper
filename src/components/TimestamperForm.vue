@@ -1,5 +1,7 @@
 <script lang="ts">
 import { game, games } from 'chess-fetcher'
+import { Game } from 'chess-fetcher/dist/types'
+import { defineComponent } from 'vue'
 
 const defaultUsername = 'Fins'
 const defaultFirstGameLink = 'https://lichess.org/r6LZ0lc0'
@@ -9,13 +11,13 @@ type Chapter = {
   title: string
 }
 
-export default {
+export default defineComponent({
   data() {
     return {
       username: defaultUsername,
       firstGameLink: defaultFirstGameLink,
 
-      games: [],
+      games: [] as Game[],
 
       gamesStartAt: 30, // seconds into YouTube video when the first game starts
       options: {
@@ -30,55 +32,56 @@ export default {
     isUsingDefault(): boolean {
       return this.username === defaultUsername && this.firstGameLink === defaultFirstGameLink
     },
-    firstGameTimestamp(): number {
-      return this.games[0].timestamp
-    },
-    hasChapters(): boolean {
+    hasGames(): boolean {
       return this.games.length > 0
     },
+    firstGameTimestamp(): number {
+      return this.hasGames ? this.games[0].timestamp : 0
+    },
     chapters(): Chapter[] {
-      if (!this.hasChapters) {
+      if (!this.hasGames) {
         return []
       }
 
-      return [
-        this.gamesStartAt >= 10
-          ? {
-              timestamp: '0:00',
-              title: 'Introduction',
-            }
-          : {},
-        ...this.games.map((game): Chapter => {
-          let title: string[] = []
+      let chapters = this.games.map((game): Chapter => {
+        let title: string[] = []
 
-          if (this.options.showOpeningName) {
-            title.push(game.opening.name)
-          }
+        if (this.options.showOpeningName) {
+          title.push(game.opening.name)
+        }
 
-          let opponentName: string
-          let opponentRating: number
-          if (this.username.toLowerCase() === game.players.white.username.toLowerCase()) {
-            opponentName = (game.players.black.title || '') + ' ' + game.players.black.username
-            opponentRating = game.players.black.rating
-          } else {
-            opponentName = (game.players.white.title || '') + ' ' + game.players.white.username
-            opponentRating = game.players.white.rating
-          }
+        let opponentName: string
+        let opponentRating: number | undefined
+        if (this.username.toLowerCase() === game.players.white.username.toLowerCase()) {
+          opponentName = (game.players.black.title || '') + ' ' + game.players.black.username
+          opponentRating = game.players.black.rating
+        } else {
+          opponentName = (game.players.white.title || '') + ' ' + game.players.white.username
+          opponentRating = game.players.white.rating
+        }
 
-          if (this.options.showOpponentName) {
-            title.push('- vs ' + opponentName)
-          }
+        if (this.options.showOpponentName) {
+          title.push('- vs ' + opponentName)
+        }
 
-          if (this.options.showOpponentRating) {
-            title.push('(' + opponentRating + ')')
-          }
+        if (this.options.showOpponentRating) {
+          title.push('(' + opponentRating + ')')
+        }
 
-          return {
-            timestamp: this.convertSecondsToHhMmSs(this.gamesStartAt + (game.timestamp - this.firstGameTimestamp) / 1000),
-            title: title.join(' '),
-          }
-        }),
-      ]
+        return {
+          timestamp: this.convertSecondsToHhMmSs(this.gamesStartAt + (game.timestamp - this.firstGameTimestamp) / 1000),
+          title: title.join(' '),
+        }
+      })
+
+      if (this.gamesStartAt >= 10) {
+        chapters.unshift({
+          timestamp: '0:00',
+          title: 'Introduction',
+        })
+      }
+
+      return chapters
     },
   },
 
@@ -112,12 +115,12 @@ export default {
       })
     },
   },
-}
+})
 </script>
 
 <template>
   <div class="lg:flex lg:flex-row">
-    <div class="lg:basis-5/12 flex-none bg-slate-100 p-4" :class="{ 'mx-auto lg:basis-2/3': !hasChapters }">
+    <div class="lg:basis-5/12 flex-none bg-slate-100 p-4" :class="{ 'mx-auto lg:basis-2/3': !hasGames }">
       <form @submit.prevent="onSubmit">
         <div class="form-control">
           <label class="label cursor-pointer">
@@ -140,7 +143,7 @@ export default {
         <iframe class="rounded-xl w-full aspect-video" src="https://www.youtube.com/embed/Aw3zcG_efuI" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
       </div>
     </div>
-    <div class="lg:basis-7/12 flex-none" v-if="hasChapters">
+    <div class="lg:basis-7/12 flex-none" v-if="hasGames">
       <div class="bg-slate-200 p-4">
         <h3 class="font-semibold">Options</h3>
         <div class="form-control">
