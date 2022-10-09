@@ -107,7 +107,7 @@ export default defineComponent({
           },
           {
             since: timestampForFirstGame,
-            until: timestampForFirstGame + 60 * 60 * 10 * 1000, // get 10 hours worth of games
+            until: timestampForFirstGame + 10 * 60 * 60 * 1000, // get 10 hours worth of games
             sort: 'dateAsc',
             opening: true,
           }

@@ -1,4 +1,4 @@
-<script setup>
+<script lang="ts" setup>
 import TimestamperForm from './components/TimestamperForm.vue'
 </script>
 
