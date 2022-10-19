@@ -14,7 +14,7 @@ type Chapter = {
 export default defineComponent({
   data() {
     return {
-      username: defaultUsername,
+      usernameInput: defaultUsername,
       firstGameLink: defaultFirstGameLink,
 
       games: [] as Game[],
@@ -29,8 +29,11 @@ export default defineComponent({
   },
 
   computed: {
+    username(): string {
+      return this.usernameInput.toLowerCase().trim()
+    },
     isUsingDefault(): boolean {
-      return this.username === defaultUsername && this.firstGameLink === defaultFirstGameLink
+      return this.username === defaultUsername.toLowerCase() && this.firstGameLink === defaultFirstGameLink
     },
     hasGames(): boolean {
       return this.games.length > 0
@@ -52,7 +55,7 @@ export default defineComponent({
 
         let opponentName: string
         let opponentRating: number | undefined
-        if (this.username.toLowerCase() === game.players.white.username.toLowerCase()) {
+        if (this.username === game.players.white.username.toLowerCase()) {
           opponentName = (game.players.black.title || '') + ' ' + game.players.black.username
           opponentRating = game.players.black.rating
         } else {
@@ -125,7 +128,7 @@ export default defineComponent({
         <div class="form-control">
           <label class="label cursor-pointer">
             <span class="label-text">Lichess username</span>
-            <input type="text" class="input input-bordered input-accent w-full max-w-xs" spellcheck="false" v-model="username" />
+            <input type="text" class="input input-bordered input-accent w-full max-w-xs" spellcheck="false" v-model="usernameInput" />
           </label>
         </div>
         <div class="form-control">
