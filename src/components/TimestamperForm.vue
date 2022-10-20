@@ -97,7 +97,10 @@ export default defineComponent({
       }
       let date = new Date('2000-01-01T00:00:00Z')
       date.setSeconds(seconds)
-      return date.toISOString().substring(11, 19).replace(/^0+:?0?/, '')
+      return date
+        .toISOString()
+        .substring(11, 19)
+        .replace(/^0+:?0?/, '')
     },
     onSubmit() {
       this.games = []
@@ -128,13 +131,23 @@ export default defineComponent({
         <div class="form-control">
           <label class="label cursor-pointer">
             <span class="label-text">Lichess username</span>
-            <input type="text" class="input input-bordered input-accent w-full max-w-xs" spellcheck="false" v-model="usernameInput" />
+            <input
+              type="text"
+              class="input input-bordered input-accent w-full max-w-xs"
+              spellcheck="false"
+              v-model="usernameInput"
+            />
           </label>
         </div>
         <div class="form-control">
           <label class="label cursor-pointer">
             <span class="label-text">Link to the first game</span>
-            <input type="text" class="input input-bordered input-accent w-full max-w-xs" spellcheck="false" v-model="firstGameLink" />
+            <input
+              type="text"
+              class="input input-bordered input-accent w-full max-w-xs"
+              spellcheck="false"
+              v-model="firstGameLink"
+            />
           </label>
         </div>
         <div class="text-center my-4">
@@ -142,8 +155,17 @@ export default defineComponent({
         </div>
       </form>
       <div class="bg-slate-300 m-4 p-4 text-center rounded-lg" v-if="isUsingDefault">
-        <p class="mb-2">Use the prefilled examples above to see what the output would look like for this "Lichess Plays" video:</p>
-        <iframe class="rounded-xl w-full aspect-video" src="https://www.youtube.com/embed/Aw3zcG_efuI" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+        <p class="mb-2">
+          Use the prefilled examples above to see what the output would look like for this "Lichess Plays" video:
+        </p>
+        <iframe
+          class="rounded-xl w-full aspect-video"
+          src="https://www.youtube.com/embed/Aw3zcG_efuI"
+          title="YouTube video player"
+          frameborder="0"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+          allowfullscreen
+        ></iframe>
       </div>
     </div>
     <div class="lg:basis-7/12 flex-none" v-if="hasGames">
@@ -176,10 +198,13 @@ export default defineComponent({
       </div>
       <div class="bg-yellow-100 p-4">
         <h3 class="font-semibold">Copy &amp; paste this to the video description</h3>
-        <p>YouTube will automatically add chapter markers and link the timestamps once this content is in the description</p>
+        <p>
+          YouTube will automatically add chapter markers and link the timestamps once this content is in the description
+        </p>
         <div class="py-4 px-2 text-sm">
           <div v-for="chapter in chapters">
-            {{ (chapter as Chapter).timestamp }} {{ (chapter as Chapter).title }}
+            {{ (chapter as Chapter).timestamp }}
+            {{ (chapter as Chapter).title }}
           </div>
         </div>
       </div>

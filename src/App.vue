@@ -18,7 +18,9 @@ import TimestamperForm from './components/TimestamperForm.vue'
     </div>
     <TimestamperForm />
     <div class="text-center mt-12">
-      <a class="link link-primary" href="https://github.com/rosen-score/lichess-youtube-timestamper">View this project on Github</a>
+      <a class="link link-primary" href="https://github.com/rosen-score/lichess-youtube-timestamper"
+        >View this project on Github</a
+      >
     </div>
   </div>
 </template>
