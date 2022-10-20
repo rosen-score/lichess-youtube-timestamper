@@ -3,18 +3,18 @@ name: ci
 on: [push, pull_request]
 
 jobs:
-    test-suite:
-        runs-on: ubuntu-latest
-        steps:
-            - uses: actions/checkout@v3
-            - uses: actions/setup-node@v3
-            - run: npm ci
-            - run: npx vue-tsc --noEmit
+  test-suite:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+      - run: npm ci
+      - run: npx vue-tsc --noEmit
 
-    check-formatting:
-        runs-on: ubuntu-latest
-        steps:
-            - uses: actions/checkout@v2
-            - uses: actions/setup-node@v3
-            - run: npm ci
-            - run: npx prettier --check .
+  check-formatting:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v3
+      - run: npm ci
+      - run: npx prettier --check .
