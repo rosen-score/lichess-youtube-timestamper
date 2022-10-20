@@ -3,7 +3,7 @@ name: ci
 on: [push, pull_request]
 
 jobs:
-  test-suite:
+  tsc:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -11,7 +11,7 @@ jobs:
       - run: npm ci
       - run: npx vue-tsc --noEmit
 
-  check-formatting:
+  prettier:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
