@@ -192,7 +192,7 @@ export default defineComponent({
         <div class="form-control">
           <label class="label cursor-pointer">
             <span class="label-text">First game starts at (seconds into video)</span>
-            <input type="number" class="input input-bordered input-accent w-24" v-model.number="gamesStartAt" min="0" />
+            <input type="number" class="input input-bordered input-accent w-32" v-model.number="gamesStartAt" min="0" />
           </label>
         </div>
       </div>
