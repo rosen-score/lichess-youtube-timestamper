@@ -2,7 +2,7 @@
 import { game, games } from 'chess-fetcher'
 import { Game } from 'chess-fetcher/dist/types'
 import { defineComponent } from 'vue'
-import { formatTimestamp } from '../utils/format-timestamp'
+import { formatChapterName, formatTimestamp } from '../utils/format'
 
 const defaultUsername = 'Fins'
 const defaultFirstGameLink = 'https://lichess.org/r6LZ0lc0'
@@ -51,7 +51,7 @@ export default defineComponent({
         let title: string[] = []
 
         if (this.options.showOpeningName) {
-          title.push(game.opening.name)
+          title.push(formatChapterName(game.opening.name))
         }
 
         let opponentName: string
