@@ -2,6 +2,7 @@
 import { game, games } from 'chess-fetcher'
 import { Game } from 'chess-fetcher/dist/types'
 import { defineComponent } from 'vue'
+import { formatTimestamp } from '../utils/format-timestamp'
 
 const defaultUsername = 'Fins'
 const defaultFirstGameLink = 'https://lichess.org/r6LZ0lc0'
@@ -79,7 +80,7 @@ export default defineComponent({
 
       if (this.gamesStartAt >= 10) {
         chapters.unshift({
-          timestamp: '0:00',
+          timestamp: formatTimestamp(new Date('2000-01-01T00:00:00Z')),
           title: 'Introduction',
         })
       }
@@ -97,10 +98,8 @@ export default defineComponent({
       }
       let date = new Date('2000-01-01T00:00:00Z')
       date.setSeconds(seconds)
-      return date
-        .toISOString()
-        .substring(11, 19)
-        .replace(/^0+:?0?/, '')
+
+      return formatTimestamp(date)
     },
     onSubmit() {
       this.games = []
