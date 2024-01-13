@@ -60,7 +60,6 @@ export default defineComponent({
 
         let opponentName: string
         let opponentRating: number | undefined
-        console.log(this.username, game.links.white)
         if (this.username === game.players.white.username?.toLowerCase()) {
           opponentName = (game.players.black.title || '') + ' ' + game.players.black.username
           opponentRating = game.players.black.rating
