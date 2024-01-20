@@ -1,7 +1,7 @@
 <script lang="ts">
 import { Game, game, games } from 'chess-fetcher'
 import { defineComponent } from 'vue'
-import { formatChapterName, formatTimestamp } from '../utils/format'
+import { formatChapterName, formatTimestamp, renameOpeningStaffordGambit } from '../utils/format'
 
 const defaultUsername = 'Fins'
 const defaultFirstGameLink = 'https://lichess.org/r6LZ0lc0'
@@ -27,6 +27,7 @@ export default defineComponent({
         showOpeningName: true,
         showOpponentName: true,
         showOpponentRating: true,
+        renameOpeningStafford: false,
       },
     }
   },
@@ -55,7 +56,13 @@ export default defineComponent({
         let title: string[] = []
 
         if (this.options.showOpeningName) {
-          title.push(formatChapterName(game.opening.name))
+          let chapterName = formatChapterName(game.opening.name)
+
+          if (this.options.renameOpeningStafford) {
+            chapterName = renameOpeningStaffordGambit(chapterName)
+          }
+
+          title.push(chapterName)
         }
 
         let opponentName: string
@@ -192,6 +199,15 @@ export default defineComponent({
               for="showOpponentRating"
             >
               Include the opponent's rating
+            </label>
+          </div>
+          <div class="flex items-center space-x-2">
+            <input type="checkbox" v-model="options.renameOpeningStafford" id="renameOpeningStafford" />
+            <label
+              class="font-medium peer-disabled:cursor-not-allowed peer-disabled:opacity-70 text-sm"
+              for="renameOpeningStafford"
+            >
+              Rename all "Russian Game: Stafford Gambit" to "STAFFORD GAMBIT"
             </label>
           </div>
           <div class="space-y-2">

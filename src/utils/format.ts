@@ -5,3 +5,11 @@ export function formatTimestamp(timestamp: Date): string {
 export function formatChapterName(name: string): string {
   return name || '(No game)'
 }
+
+export function renameOpeningStaffordGambit(chapter: string): string {
+  if (chapter.includes('Stafford Gambit')) {
+    return 'STAFFORD GAMBIT'
+  }
+
+  return chapter
+}
