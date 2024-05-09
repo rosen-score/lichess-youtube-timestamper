@@ -8,4 +8,5 @@ npm run dev
 ```
 npm run format
 npm run test
+npm run tsc
 ```
