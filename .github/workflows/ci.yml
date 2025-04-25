@@ -6,23 +6,26 @@ jobs:
   tsc:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
-      - run: npm ci
-      - run: npm run tsc
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          run_install: true
+      - run: pnpm run tsc
 
   prettier:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
-      - run: npm ci
-      - run: npx prettier --check .
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          run_install: true
+      - run: pnpx prettier --check .
 
   test:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
-      - run: npm ci
-      - run: npm test
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          run_install: true
+      - run: pnpm test
