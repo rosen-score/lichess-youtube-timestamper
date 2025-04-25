@@ -14,6 +14,8 @@ it('formats chapter names for games', () => {
 
   // When a game is aborted, the Opening is empty
   expect(formatChapterName('')).toBe('(No game)')
+
+  expect(formatChapterName(undefined)).toBe('(No game)')
 })
 
 it('renames stafford gambit chapters', () => {

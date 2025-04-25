@@ -1,7 +1,9 @@
 <script lang="ts">
-import { Game, game, games } from 'chess-fetcher'
 import { defineComponent } from 'vue'
 import { formatChapterName, formatTimestamp, renameOpeningStaffordGambit } from '../utils/format'
+import createClient from 'openapi-fetch'
+import { components, paths } from '@lichess-org/types'
+import ndjson from 'fetch-ndjson'
 
 const defaultUsername = 'Fins'
 const defaultFirstGameLink = 'https://lichess.org/r6LZ0lc0'
@@ -11,16 +13,15 @@ type Chapter = {
   title: string
 }
 
+type LichessGame = components['schemas']['GameJson']
+
 export default defineComponent({
   data() {
     return {
-      placeholderUsername: defaultUsername,
-      placeholderFirstGameLink: defaultFirstGameLink,
+      usernameInput: localStorage.getItem('usernameInput') ?? defaultUsername,
+      firstGameLink: localStorage.getItem('firstGameLink') ?? defaultFirstGameLink,
 
-      usernameInput: defaultUsername,
-      firstGameLink: defaultFirstGameLink,
-
-      games: [] as Game[],
+      games: [] as LichessGame[],
 
       gamesStartAt: 30, // seconds into YouTube video when the first game starts
       options: {
@@ -37,15 +38,13 @@ export default defineComponent({
       return this.usernameInput.toLowerCase().trim()
     },
     isUsingDefault(): boolean {
-      return (
-        this.username === this.placeholderUsername.toLowerCase() && this.firstGameLink === this.placeholderFirstGameLink
-      )
+      return this.username === defaultUsername.toLowerCase() && this.firstGameLink === defaultFirstGameLink
     },
     hasGames(): boolean {
       return this.games.length > 0
     },
     firstGameTimestamp(): number {
-      return this.hasGames ? this.games[0].timestamp : 0
+      return this.hasGames ? this.games[0].createdAt : 0
     },
     chapters(): Chapter[] {
       if (!this.hasGames) {
@@ -56,7 +55,7 @@ export default defineComponent({
         let title: string[] = []
 
         if (this.options.showOpeningName) {
-          let chapterName = formatChapterName(game.opening.name)
+          let chapterName = formatChapterName(game.opening?.name)
 
           if (this.options.renameOpeningStafford) {
             chapterName = renameOpeningStaffordGambit(chapterName)
@@ -67,11 +66,11 @@ export default defineComponent({
 
         let opponentName: string
         let opponentRating: number | undefined
-        if (this.username === game.players.white.username?.toLowerCase()) {
-          opponentName = (game.players.black.title || '') + ' ' + game.players.black.username
+        if (this.username === game.players.white.user?.id) {
+          opponentName = (game.players.black.user?.title || '') + ' ' + game.players.black.user?.name
           opponentRating = game.players.black.rating
         } else {
-          opponentName = (game.players.white?.title || '') + ' ' + game.players.white?.username
+          opponentName = (game.players.white.user?.title || '') + ' ' + game.players.white.user?.name
           opponentRating = game.players.white?.rating
         }
 
@@ -84,7 +83,7 @@ export default defineComponent({
         }
 
         return {
-          timestamp: this.convertSecondsToHhMmSs(this.gamesStartAt + (game.timestamp - this.firstGameTimestamp) / 1000),
+          timestamp: this.convertSecondsToHhMmSs(this.gamesStartAt + (game.createdAt - this.firstGameTimestamp) / 1000),
           title: title.join(' '),
         }
       })
@@ -112,23 +111,76 @@ export default defineComponent({
 
       return formatTimestamp(date)
     },
-    onSubmit() {
+    resetForm() {
+      this.usernameInput = defaultUsername
+      this.firstGameLink = defaultFirstGameLink
       this.games = []
-      game(this.firstGameLink).then((game) => {
-        let timestampForFirstGame = game.timestamp
-        games(
-          `https://lichess.org/@/${this.username}`,
-          (game) => {
-            this.games.push(game)
+      this.options = {
+        showOpeningName: true,
+        showOpponentName: true,
+        showOpponentRating: true,
+        renameOpeningStafford: false,
+      }
+    },
+    async onSubmit() {
+      localStorage.setItem('usernameInput', this.usernameInput)
+      localStorage.setItem('firstGameLink', this.firstGameLink)
+
+      this.games = []
+
+      const gameResponse = await createClient<paths, 'application/json'>({
+        baseUrl: 'https://lichess.org',
+      }).GET('/game/export/{gameId}', {
+        params: {
+          path: {
+            gameId: this.firstGameLink.split('/').pop() ?? '',
           },
-          {
-            since: timestampForFirstGame,
-            until: timestampForFirstGame + 24 * 60 * 60 * 1000, // get 24 hours worth of games
-            sort: 'dateAsc',
-            opening: true,
-          }
-        )
+        },
+        headers: {
+          Accept: 'application/json',
+        },
       })
+
+      let timestampForFirstGame = gameResponse.data?.createdAt
+
+      if (!timestampForFirstGame) {
+        console.error('Error fetching game data:', gameResponse)
+        return
+      }
+
+      await createClient<paths>({
+        baseUrl: 'https://lichess.org',
+      })
+        .GET('/api/games/user/{username}', {
+          params: {
+            path: {
+              username: this.username,
+            },
+            query: {
+              since: timestampForFirstGame,
+              until: timestampForFirstGame + 24 * 60 * 60 * 1000, // get 24 hours worth of games
+              sort: 'dateAsc',
+              opening: true,
+            },
+          },
+          headers: {
+            Accept: 'application/x-ndjson',
+          },
+          parseAs: 'stream',
+        })
+        .then(async (response) => {
+          const reader = response.response.body?.getReader()
+          if (!reader) {
+            console.error('Error reading response body:', response)
+            return
+          }
+          const gen = ndjson(reader)
+          while (true) {
+            const { done, value } = await gen.next()
+            if (done) break
+            this.games.push(value)
+          }
+        })
     },
   },
 })
@@ -146,7 +198,7 @@ export default defineComponent({
           ><input
             class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
             id="name"
-            :placeholder="placeholderUsername"
+            placeholder="Username"
             v-model="usernameInput"
             spellcheck="false"
           />
@@ -159,7 +211,7 @@ export default defineComponent({
           ><input
             class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
             id="email"
-            :placeholder="placeholderFirstGameLink"
+            placeholder="Link to Lichess game"
             v-model="firstGameLink"
             spellcheck="false"
           />
@@ -167,9 +219,17 @@ export default defineComponent({
 
         <button
           type="submit"
-          class="rounded-md bg-indigo-600 px-3.5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+          class="mr-3 rounded-md bg-indigo-600 px-3.5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
         >
           Generate Chapters
+        </button>
+
+        <button
+          type="button"
+          class="mr-3 rounded-md bg-gray-600 px-3.5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-gray-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-600"
+          @click="resetForm"
+        >
+          Reset Form
         </button>
 
         <div class="grid gap-2 bg-slate-300 p-4" v-if="hasGames">

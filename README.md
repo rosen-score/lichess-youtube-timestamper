@@ -1,12 +1,12 @@
 ## Development Setup
 
 ```
-npm install
-npm run dev
+pnpm install
+pnpm run dev
 ```
 
 ```
-npm run format
-npm run test
-npm run tsc
+pnpm format
+pnpm test
+pnpm tsc
 ```
