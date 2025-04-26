@@ -1,6 +1,6 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
-import { formatChapterName, formatTimestamp, renameOpeningStaffordGambit } from '../utils/format'
+import { formatChapterName, formatTimestamp, getGameIdFromUrl, renameOpeningStaffordGambit } from '../utils/format'
 import createClient from 'openapi-fetch'
 import { components, paths } from '@lichess-org/types'
 import ndjson from 'fetch-ndjson'
@@ -141,7 +141,7 @@ export default defineComponent({
       }).GET('/game/export/{gameId}', {
         params: {
           path: {
-            gameId: this.firstGameLink.split('/').pop() ?? '',
+            gameId: getGameIdFromUrl(this.firstGameLink),
           },
         },
         headers: {
