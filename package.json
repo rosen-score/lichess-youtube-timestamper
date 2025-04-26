@@ -6,6 +6,7 @@
     "format": "prettier --write .",
     "preview": "vite preview",
     "test": "vitest run",
+    "test:watch": "vitest",
     "tsc": "vue-tsc --noemit",
     "watch": "vitest"
   },

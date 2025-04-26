@@ -13,3 +13,13 @@ export function renameOpeningStaffordGambit(chapter: string): string {
 
   return chapter
 }
+
+export function getGameIdFromUrl(url: string): string {
+  url = url.replace(/\/(white|black)$/, '')
+  const regex = /lichess\.org\/([a-zA-Z0-9]{8,12})\/?/
+  const match = url.match(regex)
+  if (match) {
+    return match[1].substring(0, 8)
+  }
+  throw new Error('Invalid URL format')
+}

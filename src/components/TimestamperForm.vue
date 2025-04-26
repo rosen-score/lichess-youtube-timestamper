@@ -11,6 +11,8 @@ const defaultFirstGameLink = 'https://lichess.org/r6LZ0lc0'
 type Chapter = {
   timestamp: string
   title: string
+  url?: string
+  isStalemate?: boolean
 }
 
 type LichessGame = components['schemas']['GameJson']
@@ -85,6 +87,8 @@ export default defineComponent({
         return {
           timestamp: this.convertSecondsToHhMmSs(this.gamesStartAt + (game.createdAt - this.firstGameTimestamp) / 1000),
           title: title.join(' '),
+          url: `https://lichess.org/${game.id}`,
+          isStalemate: game.status === 'stalemate',
         }
       })
 
@@ -96,6 +100,10 @@ export default defineComponent({
       }
 
       return chapters
+    },
+
+    stalemates(): Chapter[] {
+      return this.chapters.filter((chapter) => chapter.isStalemate)
     },
   },
 
@@ -311,8 +319,17 @@ export default defineComponent({
     </p>
     <div class="py-4 px-2 text-sm">
       <div v-for="chapter in chapters">
-        {{ (chapter as Chapter).timestamp }}
-        {{ (chapter as Chapter).title }}
+        {{ chapter.timestamp }}
+        {{ chapter.title }}
+      </div>
+    </div>
+    <div class="py-4 px-2 text-sm" v-if="stalemates.length > 0">
+      <h2 class="font-semibold">Stalemates</h2>
+      <div v-for="chapter in stalemates">
+        <a :href="chapter.url" target="_blank" class="text-blue-800 hover:underline">
+          {{ chapter.timestamp }}
+          {{ chapter.title }}
+        </a>
       </div>
     </div>
   </div>
